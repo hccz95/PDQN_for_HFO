@@ -12,6 +12,7 @@ import numpy as np
 from hfo import *
 import math
 import matplotlib.pyplot as plt
+import os
 
 ####################  hyper parameters ##################
 BATCH_SIZE = 64
@@ -197,6 +198,8 @@ class PDQN:
         
  
     def save_net(self, folder):
+        if not os.path.exists('pdqn/'+folder):
+            os.mkdir('pdqn/'+folder)
         torch.save(self.target_qnet, 'pdqn/'+folder+'/pdqn_target_qnet.pkl')
         torch.save(self.eval_qnet, 'pdqn/'+folder+'/pdqn_eval_qnet.pkl')
         torch.save(self.xnet, 'pdqn/'+folder+'/pdqn_xnet.pkl')
@@ -330,12 +333,15 @@ def EOT_reward(status):
         return 0
 #_______________________train_____________________________
 
+if not os.path.exists('pdqn'):
+    os.mkdir('pdqn')
+hfo_dir = '/root/HFO/'  # the directory of HFO
 
 pdqn = PDQN()
 for episode in range(TOTAL_EPISODE):
     hfo_env = HFOEnvironment()
     hfo_env.connectToServer(LOW_LEVEL_FEATURE_SET,
-                            'bin/teams/base/config/formations-dt', 6000,
+                            hfo_dir + 'bin/teams/base/config/formations-dt', 6000,
                             'localhost', 'base_left', False)
     for episode in range(TOTAL_EPISODE):
         status = IN_GAME
